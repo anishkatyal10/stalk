@@ -52,7 +52,7 @@ const Login = props => {
             validationSchema={loginValidation}
             onSubmit={values => {
               console.log(values, 'users');
-              SignInUser(values.Email, values.password)
+              SignInUser(values.Email, values.Password)
                 .then(res => {
                   console.log('res', res);
                   alert('logged in');
