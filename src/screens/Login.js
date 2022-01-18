@@ -14,7 +14,9 @@ import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
 import Footer from '../components/Footer';
-import { useLinkProps } from '@react-navigation/native';
+import {useLinkProps} from '@react-navigation/native';
+import Firebase from '../Firebase/firebaseConfig';
+import {SignInUser} from '../Firebase/SignInUser';
 
 const loginValidation = Yup.object().shape({
   Email: Yup.string()
@@ -27,7 +29,7 @@ const loginValidation = Yup.object().shape({
     .max(15, 'Password is too long - should be 13 characters maximum'),
 });
 
-const Login = (props) => {
+const Login = props => {
   return (
     <View
       style={{
@@ -50,10 +52,16 @@ const Login = (props) => {
             validationSchema={loginValidation}
             onSubmit={values => {
               console.log(values, 'users');
-              setTimeout(() => {
-                alert('logged in');
-                props.navigation.navigate("dashboard")
-              }, 500);
+              SignInUser(values.Email, values.password)
+                .then(res => {
+                  console.log('res', res);
+                  alert('logged in');
+                  props.navigation.navigate('dashboard');
+                })
+                .catch(error => {
+                  alert(error);
+                });
+              setTimeout(() => {}, 500);
             }}>
             {({errors, values, touched, handleSubmit, setFieldValue}) => {
               return (

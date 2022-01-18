@@ -8,24 +8,15 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import RadioForm from 'react-native-simple-radio-button';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
 import Footer from '../components/Footer';
-
-const data = [
-  {
-    label: 'Male',
-    value: 'Male',
-  },
-  {
-    label: 'Female',
-    value: 'Female',
-  },
-];
+import { SignUpUser } from '../Firebase/SignUpUser';
+import Firebase from '../Firebase/firebaseConfig';
+import { AddUser } from '../Firebase/Users';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -40,6 +31,8 @@ const loginValidation = Yup.object().shape({
     .required('Please enter your Password')
     .min(8, 'Password is too short - should be 8 characters minimum.')
     .max(15, 'Password is too long - should be 13 characters maximum'),
+    phoneNumber: Yup.string()
+    .required('Please enter your Phone number')
 });
 
 const Signup = (props) => {
@@ -61,11 +54,27 @@ const Signup = (props) => {
               fullName: '',
               Email: '',
               Password: '',
-              confirmPassword: '',
+              phoneNumber: '',
             }}
             validationSchema={loginValidation}
             onSubmit={values => {
               console.log(values, 'users');
+              SignUpUser(values.Email, values.Password).
+              then((res) => {
+                console.log("res", res)
+                var userUID = Firebase.auth().currentUser.uid;
+                console.log(userUID, "uid")
+                AddUser(values.fullName, values.Email, values.phoneNumber,userUID).
+                then(()=>{
+                    alert("success")
+                }).
+                catch((error)=>{
+                    alert(error)
+              }).
+              catch((error)=>{
+                alert(error);
+              })
+            })
               setTimeout(() => {
                 alert('logged in');
                 props.navigation.navigate("login")
@@ -125,6 +134,19 @@ const Signup = (props) => {
                     {errors.Password && touched.Password && (
                       <Text style={styles.error}>{errors.Password}</Text>
                     )}
+                    <EmailInput
+                      emailStyle={styles.email}
+                      name="phoneNumber"
+                      id="phoneNumber"
+                      type="text"
+                      value={values.phoneNumber}
+                      setFieldValue={setFieldValue}
+                      placeholder="Phone Number"
+                      placeholderTextColor="grey"
+                    />
+                    {errors.phoneNumber && touched.phoneNumber && (
+                      <Text style={styles.error}>{errors.phoneNumber}</Text>
+                    )}
                   </View>
                   <View
                     style={{
@@ -137,6 +159,12 @@ const Signup = (props) => {
                       textStyle={styles.signinTextStyle}
                       onPress={handleSubmit}
                       title="sign up"
+                    />
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle}
+                      textStyle={styles.signinTextStyle}
+                      onPress={()=> {props.navigation.navigate("login")}}
+                      title="login"
                     />
                   </View>
                 </View>
