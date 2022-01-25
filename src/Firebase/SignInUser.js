@@ -1,8 +1,8 @@
 import Firebase from './firebaseConfig';
 
-export const SignInUser = async (email, password) => {
+export const SignInUser = (email, password) => {
   try {
-    return await Firebase.auth().signInWithEmailAndPassword(
+    return Firebase.auth().signInWithEmailAndPassword(
       email,
       password
     );

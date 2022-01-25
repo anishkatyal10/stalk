@@ -7,6 +7,7 @@ import {
   View,
   ImageBackground,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -14,9 +15,9 @@ import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
 import Footer from '../components/Footer';
-import { SignUpUser } from '../Firebase/SignUpUser';
+import {SignUpUser} from '../Firebase/SignUpUser';
 import Firebase from '../Firebase/firebaseConfig';
-import { AddUser } from '../Firebase/Users';
+import {AddUser} from '../Firebase/Users';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -31,11 +32,10 @@ const loginValidation = Yup.object().shape({
     .required('Please enter your Password')
     .min(8, 'Password is too short - should be 8 characters minimum.')
     .max(15, 'Password is too long - should be 13 characters maximum'),
-    phoneNumber: Yup.string()
-    .required('Please enter your Phone number')
+  phoneNumber: Yup.string().required('Please enter your Phone number'),
 });
 
-const Signup = (props) => {
+const Signup = props => {
   return (
     <View
       style={{
@@ -58,43 +58,34 @@ const Signup = (props) => {
             }}
             validationSchema={loginValidation}
             onSubmit={values => {
-              console.log(values, 'users');
-              SignUpUser(values.Email, values.Password).
-              then((res) => {
-                console.log("res", res)
+              SignUpUser(values.Email, values.Password).then(res => {
                 var userUID = Firebase.auth().currentUser.uid;
-                console.log(userUID, "uid")
-                AddUser(values.fullName, values.Email, values.phoneNumber,userUID).
-                then(()=>{
-                    alert("success")
-                }).
-                catch((error)=>{
-                    alert(error)
-              }).
-              catch((error)=>{
-                alert(error);
-              })
-            })
+                AddUser(
+                  values.fullName,
+                  values.Email,
+                  values.phoneNumber,
+                  '',
+                  userUID,
+                )
+                  .then(() => {
+                    Alert.alert('user saved');
+                  })
+                  .catch(error => {
+                    Alert.alert(error);
+                  })
+                  .catch(error => {
+                    Alert.alert(error);
+                  });
+              });
               setTimeout(() => {
-                alert('logged in');
-                props.navigation.navigate("login")
+                alert('Registered Successfully');
+                props.navigation.navigate('login');
               }, 500);
             }}>
             {({errors, values, touched, handleSubmit, setFieldValue}) => {
               return (
-                <View
-                  style={{
-                    flex: 2.5,
-                    flexDirection: 'column',
-                    paddingVertical: 10,
-                  }}>
-                  <View
-                    style={{
-                      flex: 2.5,
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      paddingVertical: 10,
-                    }}>
+                <View style={styles.mainView}>
+                  <View style={styles.view}>
                     <EmailInput
                       emailStyle={styles.email}
                       name="fullName"
@@ -160,12 +151,20 @@ const Signup = (props) => {
                       onPress={handleSubmit}
                       title="sign up"
                     />
-                    <RadioButton
-                      buttonStyle={styles.loginButtonStyle}
-                      textStyle={styles.signinTextStyle}
-                      onPress={()=> {props.navigation.navigate("login")}}
-                      title="login"
-                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        props.navigation.navigate('login');
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          marginLeft: 25,
+                          color: 'white',
+                        }}>
+                        Already have Account? Click Here
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               );
@@ -178,6 +177,17 @@ const Signup = (props) => {
   );
 };
 const styles = StyleSheet.create({
+  mainView: {
+    flex: 2.5,
+    flexDirection: 'column',
+    paddingVertical: 10,
+  },
+  view: {
+    flex: 2.5,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
   container: {
     flex: 0.6,
     flexDirection: 'column',
