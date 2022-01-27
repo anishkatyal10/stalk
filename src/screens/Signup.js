@@ -37,15 +37,17 @@ const loginValidation = Yup.object().shape({
 
 const Signup = props => {
   return (
+    
     <View
       style={{
         flex: 1,
         flexDirection: 'column',
       }}>
-      <ScrollView style={{flex: 1}}>
         <ImageBackground
           source={require('../images/login1.jpg')}
-          style={{flex: 1, flexDirection: 'column', paddingHorizontal: 20}}>
+          style={{flex: 1, height: '100%', flexDirection: 'column', paddingHorizontal:20}}>
+      <ScrollView style={{flex: 1}}>
+        
           <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome To STalk</Text>
           </View>
@@ -170,10 +172,13 @@ const Signup = props => {
               );
             }}
           </Formik>
-        </ImageBackground>
       </ScrollView>
+      </ImageBackground>
+
       <Footer />
+
     </View>
+
   );
 };
 const styles = StyleSheet.create({
