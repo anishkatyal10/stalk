@@ -108,6 +108,7 @@ class Dashboard extends PureComponent {
                 backgroundColor: '#ccc',
                 paddingLeft: 25,
               }}
+              value={this.state.message}
               onChangeText={text => this.setState({message: text})}
             />
           </View>
