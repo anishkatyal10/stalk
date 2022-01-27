@@ -5,7 +5,7 @@ import Dashboard from './App/Screens/Dashboard';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import Screen1 from './App/Screens/Screen1';
+import EditProfile from './App/Screens/EditProfile';
 import Screen2 from './App/Screens/Screen2';
 import Screen3 from './App/Screens/Screen3';
 import CustomDrawer from './App/Components/CustomDrawer';
@@ -17,9 +17,9 @@ const Drawer = createDrawerNavigator();
 
 function DrawerRoutes() {
   return (
-    <Drawer.Navigator initialRouteName="Home" drawerContent={props => <CustomDrawer {...props} />}>
-      <Drawer.Screen name="Dashboard" component={Dashboard} />
-      <Drawer.Screen name="Screen1" component={Screen1} />
+    <Drawer.Navigator initialRouteName="Messages" drawerContent={props => <CustomDrawer {...props} />}>
+      <Drawer.Screen name="Messages" component={Dashboard} />
+      <Drawer.Screen name="Edit Profile" component={EditProfile} />
       <Drawer.Screen name="Screen2" component={Screen2} />
       <Drawer.Screen name="Screen3" component={Screen3} />
     </Drawer.Navigator>
@@ -30,15 +30,14 @@ const App = props => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        
-        <Stack.Screen
-          name="login"
-          component={Login}
-          options={{title: '', headerShown: false}}
-        />
         <Stack.Screen
           name="signup"
           component={Signup}
+          options={{ title: '', headerShown: false }}
+        />
+        <Stack.Screen
+          name="login"
+          component={Login}
           options={{title: '', headerShown: false}}
         />
         <Stack.Screen

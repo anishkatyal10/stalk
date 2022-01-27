@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "970762741663",
-    "firebase_url": "https://stalk-9ec4e-default-rtdb.firebaseio.com",
-    "project_id": "stalk-9ec4e",
-    "storage_bucket": "stalk-9ec4e.appspot.com"
+    "project_number": "64519171575",
+    "firebase_url": "https://stalk-b1a12-default-rtdb.firebaseio.com",
+    "project_id": "stalk-b1a12",
+    "storage_bucket": "stalk-b1a12.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:970762741663:android:cead4257df8ef844857faa",
+        "mobilesdk_app_id": "1:64519171575:android:bad53a717f9b6f00fb12f2",
         "android_client_info": {
           "package_name": "com.stalk"
         }
       },
       "oauth_client": [
         {
-          "client_id": "970762741663-8hu46a1kueuq02srnqmrncmgtnbfhpqe.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.stalk",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "970762741663-upojaenmp07irs03as1h5u8afus0kt1r.apps.googleusercontent.com",
+          "client_id": "64519171575-4658qm5o71bjj9aao5tskeqh22egajdl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBYoqgoJ8d1hemOWCapbgJPbkT3JM8uDHs"
+          "current_key": "AIzaSyCQ4uLn-1v2t1gQb_z9S9d0bWbCXtkhqnM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "970762741663-upojaenmp07irs03as1h5u8afus0kt1r.apps.googleusercontent.com",
+              "client_id": "64519171575-4658qm5o71bjj9aao5tskeqh22egajdl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
