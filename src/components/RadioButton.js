@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         shadowColor: 'black',
         shadowOpacity: 0.5,
-        shadowOffset: {width:2, height:2}
+        shadowOffset: {width:2, height:2},
     },
     text: {
         fontSize: 15,

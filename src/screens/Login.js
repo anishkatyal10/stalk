@@ -28,22 +28,35 @@ const loginValidation = Yup.object().shape({
     .max(15, 'Password is too long - should be 13 characters maximum'),
 });
 
+const Online = () => {
+  const uid = Firebase.auth().currentUser.uid;
+  const reference = Firebase.database().ref('online/' + uid);
+  reference.set({uuid: uid}).then(() => console.log('Online presence set'));
+};
 const Login = props => {
+  useEffect(() => {
+    async function getUID() {
+      const uid = await AsyncStorage.getItem('UID');
+      if (uid) {
+        props.navigation.navigate('dashboard');
+      }
+    }
+    getUID();
+  }, []);
   return (
     <View
       style={{
         flex: 1,
         flexDirection: 'column',
       }}>
-      <ImageBackground
-        source={require('../images/login1.jpg')}
-        style={{
-          flex: 1,
-          height: '100%',
-          flexDirection: 'column',
-          paddingHorizontal: 20,
-        }}>
-        <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
+        <ImageBackground
+          source={require('../images/login1.jpg')}
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            paddingHorizontal: 20,
+          }}>
           <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome To STalk</Text>
           </View>
@@ -60,6 +73,7 @@ const Login = props => {
                   const uid = Firebase.auth().currentUser.uid;
                   await AsyncStorage.setItem('UID', uid);
                   props.navigation.navigate('dashboard');
+                  Online();
                 })
                 .catch(error => {
                   alert(error);
@@ -68,55 +82,72 @@ const Login = props => {
             }}>
             {({errors, values, touched, handleSubmit, setFieldValue}) => {
               return (
-                <View style={styles.main}>
-                  <EmailInput
-                    emailStyle={styles.email}
-                    name="Email"
-                    id="Email"
-                    type="text"
-                    value={values.Email}
-                    setFieldValue={setFieldValue}
-                    placeholder="Enter Email"
-                    placeholderTextColor="grey"
-                  />
-                  {errors.Email && touched.Email && (
-                    <Text style={styles.error}>{errors.Email}</Text>
-                  )}
-                  <PasswordInput
-                    passwordStyle={styles.password}
-                    placeholder="Enter Password"
-                    placeholderTextColor="grey"
-                    name="Password"
-                    id="Password"
-                    type="text"
-                    setFieldValue={setFieldValue}
-                    value={values.Password}
-                  />
-                  {errors.Password && touched.Password && (
-                    <Text style={styles.error}>{errors.Password}</Text>
-                  )}
-
-                  <RadioButton
-                    buttonStyle={styles.loginButtonStyle}
-                    textStyle={styles.signinTextStyle}
-                    onPress={handleSubmit}
-                    title="login"
-                  />
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      props.navigation.navigate('signup');
+                <View
+                  style={{
+                    flex: 2.5,
+                    marginLeft: 10,
+                    flexDirection: 'column',
+                    alignItems:'flex-start',
+                    paddingVertical: 36,
+                  }}>
+                  <View style={{ justifyContent: 'center', flexDirection: 'column', paddingVertical: 36 }}>
+                    <EmailInput
+                      emailStyle={styles.email}
+                      name="Email"
+                      id="Email"
+                      type="text"
+                      value={values.Email}
+                      setFieldValue={setFieldValue}
+                      placeholder="Enter Email"
+                      placeholderTextColor="grey"
+                    />
+                    {errors.Email && touched.Email && (
+                      <Text style={styles.error}>{errors.Email}</Text>
+                    )}
+                    <PasswordInput
+                      passwordStyle={styles.password}
+                      placeholder="Enter Password"
+                      placeholderTextColor="grey"
+                      name="Password"
+                      id="Password"
+                      type="text"
+                      setFieldValue={setFieldValue}
+                      value={values.Password}
+                    />
+                    {errors.Password && touched.Password && (
+                      <Text style={styles.error}>{errors.Password}</Text>
+                    )}
+                  </View>
+                  <View
+                    style={{
+                      flex: 0.9,
+                      flexDirection: 'column',
+                      alignItems:'flex-start',
+                      paddingVertical: 35,
                     }}>
-                    <Text style={styles.signup}>New User? Click Here</Text>
-                  </TouchableOpacity>
+                    <View style={styles.buttonContainer1}>
+                      <RadioButton
+                        buttonStyle={styles.loginButtonStyle}
+                        textStyle={styles.signinTextStyle}
+                        onPress={handleSubmit}
+                        title="login"
+                      />
+                    </View>
+                    <View style={[styles.buttonContainer1, { marginBottom: 95 }]}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          props.navigation.navigate('signup');
+                        }}>
+                        <Text style={styles.signup}>New User? Click Here</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
               );
             }}
           </Formik>
-        </ScrollView>
-      </ImageBackground>
-
-      <Footer />
+        </ImageBackground>
+      </ScrollView>
     </View>
   );
 };
@@ -139,9 +170,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+    color: 'white',
   },
   loginButtonStyle: {
     backgroundColor: 'green',
+    width: '85%',
+       
   },
   signinTextStyle: {
     color: 'white',
@@ -155,15 +189,22 @@ const styles = StyleSheet.create({
   email: {
     height: 40,
     width: '80%',
-    marginVertical: 20,
+    marginVertical: 15,
     color: 'grey',
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',
   },
+  buttonContainer1: {
+    width: '85%',
+    marginBottom: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 35,
+    justifyContent: 'flex-start'
+},
   password: {
     height: 40,
     width: '80%',
-    marginVertical: 50,
     color: 'grey',
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',

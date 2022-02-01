@@ -1,6 +1,6 @@
 import React from 'react';
-import Login from './App/Screens/Login';
-import Signup from './App/Screens/Signup';
+import Login from './src/screens/Login';
+import Signup from './src/screens/Signup';
 import Dashboard from './src/screens/Dashboard';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -18,7 +18,7 @@ const Drawer = createDrawerNavigator();
 function DrawerRoutes() {
   return (
     <Drawer.Navigator initialRouteName="Messages" drawerContent={props => <CustomDrawer {...props} />}>
-      <Drawer.Screen name="Messages" component={Dashboard} />
+      <Drawer.Screen name="Messages" component={Dashboard} options={{title: ''}} />
       <Drawer.Screen name="Edit Profile" component={EditProfile} />
       <Drawer.Screen name="Screen2" component={Screen2} />
       <Drawer.Screen name="Screen3" component={Screen3} />

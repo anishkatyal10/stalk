@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 0,
     fontSize: 15,
-    color: 'white'
+    color: 'white',
   },
   textFieldView: {
     height: 40,
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft:15,
     justifyContent: 'center',
+    marginTop: 30
   },
 });
 export default PasswordInput;

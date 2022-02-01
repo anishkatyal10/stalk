@@ -45,7 +45,8 @@ const styles = StyleSheet.create ({
         width: width * 0.80,
         marginTop: 5,
         marginBottom: 10,
-        marginLeft: 15
+        marginLeft: 15,
+        marginVertical: 20
     }
 })
 export default EmailInput;

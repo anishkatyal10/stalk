@@ -6,17 +6,22 @@ import {
   TextInput,
   View,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import MessagesHeader from '../components/MessagesHeader';
 import Firebase from '../Firebase/firebaseConfig';
 import Icons from 'react-native-vector-icons/Feather';
-import {SendMessage, UserOnline} from '../Firebase/Message';
+import {SendMessage, Display} from '../Firebase/Message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Button, ButtonGroup} from 'react-native-elements';
+import {object} from 'yup/lib/locale';
 class Dashboard extends PureComponent {
   state = {
     message: '',
     currentUid: '',
     allMessages: [],
+    status: 'online',
+    allUsers: [],
   };
 
   async componentDidMount() {
@@ -39,8 +44,36 @@ class Dashboard extends PureComponent {
     } catch (error) {
       alert(error);
     }
+    this.displayUsers();
   }
 
+  displayUsers = () => {
+    if (this.state.currentUid) {
+      try {
+        Firebase.database()
+          .ref('online')
+          .on('value', dataSnap => {
+            dataSnap.forEach(data => {
+             this.getOnlineUsers(data.val().uuid)
+            });
+          });
+      } catch (error) {
+        alert(error);
+      }
+    }
+  };
+
+  getOnlineUsers = (uid) => {
+    this.setState({allUsers:[]})
+    Firebase.database().ref('users/' + uid).once('value', snap => {
+      this.setState({allUsers:[...this.state.allUsers,snap.val().name]})
+    })
+  }
+  showOnlineUsers = () => {
+    return this.state.allUsers.map(item => {
+    <li key={item}>{item}</li>
+    })
+  }
   sendMessage = () => {
     if (this.state.message) {
       SendMessage(this.state.currentUid, this.state.message)
@@ -53,20 +86,13 @@ class Dashboard extends PureComponent {
     }
   };
 
-  Logout = props => {
-    Firebase.auth()
-      .signOut()
-      .then(() => {
-        this.props.navigation.navigate('login');
-      })
-      .catch(error => {
-        alert(error);
-      });
-  };
   render() {
     return (
       <View style={{flex: 1, backgroundColor: '#81BFCF'}}>
         <MessagesHeader />
+        <View style={{marginHorizontal: 5}}>
+          <Text style={{fontSize: 20}}>{this.state.allUsers}</Text>
+        </View>
         <FlatList
           style={{marginBottom: 60}}
           inverted

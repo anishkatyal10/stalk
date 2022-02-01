@@ -14,3 +14,4 @@ export const AddUser = async (name, email, phone, image, uid) => {
         return error;
     }
 }
+
