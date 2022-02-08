@@ -7,6 +7,7 @@ import {
   View,
   ImageBackground,
   ScrollView,
+  Image,
   Alert,
 } from 'react-native';
 import {Formik} from 'formik';
@@ -18,6 +19,11 @@ import Footer from '../components/Footer';
 import {SignUpUser} from '../Firebase/SignUpUser';
 import Firebase from '../Firebase/firebaseConfig';
 import {AddUser} from '../Firebase/Users';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import ImgToBase64 from 'react-native-image-base64';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserImage} from '../Firebase/Users';
+import storage from '@react-native-firebase/storage';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -36,18 +42,50 @@ const loginValidation = Yup.object().shape({
 });
 
 const Signup = props => {
+  const [imageuri, setImageuri] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const openGallery = () => {
+    launchImageLibrary('photo', response => {
+      console.log(response, 'response');
+      setImageuri(response.assets[0].uri);
+    });
+  };
+
+  const uploadImage = async () => {
+    const uploadUri = imageuri;
+    console.log(uploadUri, 'upload uri');
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+    setUploading(true);
+    try {
+      const snapshotObj = await storage().ref(filename).putFile(uploadUri);
+      if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
+        return `https://firebasestorage.googleapis.com/v0/b/stalk-b1a12.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
+      }
+
+      setUploading(false);
+      console.log('Image uploaded successfully to cloud');
+    } catch (e) {
+      console.log(e);
+    }
+
+    setImageuri(null);
+  };
   return (
-    
     <View
       style={{
         flex: 1,
         flexDirection: 'column',
+        backgroundColor:'#43425D',
       }}>
-        <ImageBackground
-          source={require('../images/login1.jpg')}
-          style={{flex: 1, height: '100%', flexDirection: 'column', paddingHorizontal:20}}>
-      <ScrollView style={{flex: 1}}>
-        
+      {/* <ImageBackground
+        source={require('../images/login1.jpg')}
+        style={{
+          flex: 1,
+          height: '100%',
+          flexDirection: 'column',
+          paddingHorizontal: 20,
+        }}> */}
+        <ScrollView style={{flex: 1}}>
           <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome To STalk</Text>
           </View>
@@ -60,29 +98,31 @@ const Signup = props => {
             }}
             validationSchema={loginValidation}
             onSubmit={values => {
-              SignUpUser(values.Email, values.Password).then(res => {
-                var userUID = Firebase.auth().currentUser.uid;
-                AddUser(
-                  values.fullName,
-                  values.Email,
-                  values.phoneNumber,
-                  '',
-                  userUID,
-                )
-                  .then(() => {
-                    Alert.alert('user saved');
-                  })
-                  .catch(error => {
-                    Alert.alert(error);
-                  })
-                  .catch(error => {
-                    Alert.alert(error);
-                  });
-              });
-              setTimeout(() => {
-                alert('Registered Successfully');
-                props.navigation.navigate('login');
-              }, 500);
+              SignUpUser(values.Email, values.Password)
+                .then(async res => {
+                  const downloadedImage = await uploadImage();
+                  console.log(downloadedImage, 'downImage');
+                  var userUID = Firebase.auth().currentUser.uid;
+                  console.log(userUID, 'userid');
+                  console.log('upload image called before');
+                  AddUser(
+                    values.fullName,
+                    values.Email,
+                    values.phoneNumber,
+                    downloadedImage,
+                    userUID,
+                  )
+                    .then(() => {
+                      props.navigation.navigate('login');
+                      Alert.alert('user saved');
+                    })
+                    .catch(error => {
+                      Alert.alert(error);
+                    });
+                })
+                .catch(error => {
+                  Alert.alert(error);
+                });
             }}>
             {({errors, values, touched, handleSubmit, setFieldValue}) => {
               return (
@@ -140,6 +180,11 @@ const Signup = props => {
                     {errors.phoneNumber && touched.phoneNumber && (
                       <Text style={styles.error}>{errors.phoneNumber}</Text>
                     )}
+                    <TouchableOpacity
+                      onPress={openGallery}
+                      style={styles.Image}>
+                      <Text style={styles.buttonText}>Select File</Text>
+                    </TouchableOpacity>
                   </View>
                   <View
                     style={{
@@ -159,7 +204,7 @@ const Signup = props => {
                       }}>
                       <Text
                         style={{
-                          fontSize: 16,
+                          fontSize: 12,
                           fontWeight: 'bold',
                           marginLeft: 25,
                           color: 'white',
@@ -172,13 +217,9 @@ const Signup = props => {
               );
             }}
           </Formik>
-      </ScrollView>
-      </ImageBackground>
-
-      <Footer />
-
+        </ScrollView>
+      {/* </ImageBackground> */}
     </View>
-
   );
 };
 const styles = StyleSheet.create({
@@ -186,6 +227,8 @@ const styles = StyleSheet.create({
     flex: 2.5,
     flexDirection: 'column',
     paddingVertical: 10,
+    marginLeft: 20
+
   },
   view: {
     flex: 2.5,
@@ -206,7 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   loginButtonStyle: {
-    backgroundColor: 'green',
+    backgroundColor: '#28E7EF',
   },
   signinTextStyle: {
     color: 'white',
@@ -218,20 +261,28 @@ const styles = StyleSheet.create({
     marginLeft: 17,
   },
   email: {
-    height: 40,
     width: '80%',
-    marginVertical: 50,
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',
     color: 'white',
   },
-  password: {
-    height: 40,
-    width: '80%',
-    marginVertical: 20,
+  buttonText: {
     color: 'grey',
+  },
+  password: {
+    width: '80%',
+    color: 'white',
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',
+  },
+  Image: {
+    height: 40,
+    borderBottomWidth: 1.9,
+    borderBottomColor: '#D3D3D3',
+    color: 'white',
+    marginLeft: 15,
+    margin: 20,
+    width: '85%'
   },
   gender: {
     color: 'grey',

@@ -6,22 +6,22 @@ import {
   TextInput,
   View,
   FlatList,
-  TouchableOpacity,
+  Image,
 } from 'react-native';
-import MessagesHeader from '../components/MessagesHeader';
 import Firebase from '../Firebase/firebaseConfig';
 import Icons from 'react-native-vector-icons/Feather';
 import {SendMessage, Display} from '../Firebase/Message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Button, ButtonGroup} from 'react-native-elements';
-import {object} from 'yup/lib/locale';
+import storage from '@react-native-firebase/storage';
+import 'firebase/firestore';
+
 class Dashboard extends PureComponent {
   state = {
     message: '',
     currentUid: '',
     allMessages: [],
     status: 'online',
-    allUsers: [],
+    allUsers: []
   };
 
   async componentDidMount() {
@@ -54,7 +54,7 @@ class Dashboard extends PureComponent {
           .ref('online')
           .on('value', dataSnap => {
             dataSnap.forEach(data => {
-             this.getOnlineUsers(data.val().uuid)
+              this.getOnlineUsers(data.val().uuid);
             });
           });
       } catch (error) {
@@ -63,17 +63,27 @@ class Dashboard extends PureComponent {
     }
   };
 
-  getOnlineUsers = (uid) => {
-    this.setState({allUsers:[]})
-    Firebase.database().ref('users/' + uid).once('value', snap => {
-      this.setState({allUsers:[...this.state.allUsers,snap.val().name]})
-    })
-  }
+  getOnlineUsers = uid => {
+    this.setState({allUsers: []});
+    Firebase.database()
+      .ref('users/' + uid)
+      .once('value', snap => {
+        this.setState({allUsers: [...this.state.allUsers, snap.val().image]});
+        console.log(this.state.allUsers, 'user images');
+      });
+  };
   showOnlineUsers = () => {
-    return this.state.allUsers.map(item => {
-    <li key={item}>{item}</li>
-    })
-  }
+    {
+      this.state.allUsers.map((item, id) => {
+        <li key={id} style={{marginVertical: 5, marginHorizontal: 5}}>
+          <Image
+            style={{width: 58, height: 58, borderRadius: 40}}
+            source={{uri: item}}
+          />
+        </li>;
+      });
+    }
+  };
   sendMessage = () => {
     if (this.state.message) {
       SendMessage(this.state.currentUid, this.state.message)
@@ -88,11 +98,17 @@ class Dashboard extends PureComponent {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: '#81BFCF'}}>
-        <MessagesHeader />
-        <View style={{marginHorizontal: 5}}>
-          <Text style={{fontSize: 20}}>{this.state.allUsers}</Text>
+      <View style={{flex: 1, backgroundColor: '#1F313B'}}>
+        <View style={{flexDirection:'row'}}>
+          {this.state.allUsers.map((image, i) => {
+            return (
+              <View style={{flexDirection:'row', marginVertical: 5, marginHorizontal: 5}} key={i}>
+                <Image style= {{width:40, height: 40, borderRadius: 40}} source={{uri: image}} />
+              </View>
+            );
+          })}
         </View>
+       
         <FlatList
           style={{marginBottom: 60}}
           inverted
@@ -103,6 +119,7 @@ class Dashboard extends PureComponent {
               style={{
                 marginVertical: 5,
                 maxWidth: Dimensions.get('window').width / 2 + 10,
+                margin: 10,
                 alignSelf:
                   this.state.currentUid === item.sendBy
                     ? 'flex-end'
@@ -112,7 +129,7 @@ class Dashboard extends PureComponent {
                 style={{
                   borderRadius: 20,
                   backgroundColor:
-                    this.state.currentUid === item.sendBy ? '#fff' : '#ccc',
+                    this.state.currentUid === item.sendBy ? '#E0D5FF' : '#EBEBEB',
                 }}>
                 <Text style={styles.messageText}>{item.message}</Text>
               </View>
@@ -122,7 +139,7 @@ class Dashboard extends PureComponent {
         <View style={styles.inputBoxView}>
           <View
             style={{width: '10%', justifyContent: 'center', marginLeft: 10}}>
-            <Icons name="camera" size={25} color="#fff" />
+            <Icons name="camera" size={25} color="#00B5BD" />
           </View>
           <View style={{width: '75%', justifyContent: 'center'}}>
             <TextInput
@@ -130,8 +147,8 @@ class Dashboard extends PureComponent {
               placeholderTextColor="#000"
               style={{
                 height: 40,
-                borderRadius: 20,
-                backgroundColor: '#ccc',
+                borderRadius: 15,
+                backgroundColor: '#EAEEEF',
                 paddingLeft: 25,
               }}
               value={this.state.message}
@@ -143,7 +160,7 @@ class Dashboard extends PureComponent {
             <Icons
               name="send"
               size={25}
-              color="#fff"
+              color="#00B5BD"
               onPress={() => this.sendMessage()}
             />
           </View>

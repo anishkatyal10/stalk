@@ -41,10 +41,9 @@ const styles = StyleSheet.create ({
         color: 'white'
     },
     textFieldView: {
-        height: 40,
+        height: 50,
         width: width * 0.80,
         marginTop: 5,
-        marginBottom: 10,
         marginLeft: 15
     }
 })

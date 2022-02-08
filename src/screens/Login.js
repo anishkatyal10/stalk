@@ -48,15 +48,16 @@ const Login = props => {
       style={{
         flex: 1,
         flexDirection: 'column',
+        backgroundColor: '#43425D'
       }}>
       <ScrollView style={{flex: 1}}>
-        <ImageBackground
+        {/* <ImageBackground
           source={require('../images/login1.jpg')}
           style={{
             flex: 1,
             flexDirection: 'column',
             paddingHorizontal: 20,
-          }}>
+          }}> */}
           <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome To STalk</Text>
           </View>
@@ -76,9 +77,9 @@ const Login = props => {
                   Online();
                 })
                 .catch(error => {
-                  alert(error);
+                  alert("User doesn't exists");
                 });
-              setTimeout(() => {}, 500);
+              
             }}>
             {({errors, values, touched, handleSubmit, setFieldValue}) => {
               return (
@@ -146,7 +147,7 @@ const Login = props => {
               );
             }}
           </Formik>
-        </ImageBackground>
+        {/* </ImageBackground> */}
       </ScrollView>
     </View>
   );
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   loginButtonStyle: {
-    backgroundColor: 'green',
+    backgroundColor: '#28E7EF',
     width: '85%',
        
   },
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#D3D3D3',
   },
   signup: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     marginLeft: 25,
     color: 'white',

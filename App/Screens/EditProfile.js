@@ -11,7 +11,6 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-//import 'firebase/compat/storage'; 
 import storage from '@react-native-firebase/storage';
 import BottomSheet from 'reanimated-bottom-sheet';
 import Animated from 'react-native-reanimated';
@@ -22,10 +21,8 @@ import Firebase from '../Firebase/firebaseConfig';
 const EditProfile = () => {
 
     const imj = require('../asset/user.jpg')
-
     const [image, setImage] = useState('../asset/user.jpg');
     const [userData, setUserData] = useState(null);
-    // const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("")
 
     var userUID = Firebase.auth().currentUser.uid;
@@ -172,15 +169,10 @@ const EditProfile = () => {
                                         borderRadius: 10,
                                     }} />
                                 </View>
-
-
                             </ImageBackground>
-
                         </View>
-
                     </TouchableOpacity>
                     <Text style={{ marginTop: 40, fontSize: 18, fontWeight: 'bold', color: 'black', marginBottom: 20 }}>{userData ? userData.name : 'UserName'}</Text>
-
                 </View>
 
                 <View style={styles.action}>

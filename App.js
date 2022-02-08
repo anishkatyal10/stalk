@@ -6,8 +6,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import EditProfile from './App/Screens/EditProfile';
-import Screen2 from './App/Screens/Screen2';
-import Screen3 from './App/Screens/Screen3';
 import CustomDrawer from './App/Components/CustomDrawer';
 import 'react-native-gesture-handler';
 
@@ -18,10 +16,8 @@ const Drawer = createDrawerNavigator();
 function DrawerRoutes() {
   return (
     <Drawer.Navigator initialRouteName="Messages" drawerContent={props => <CustomDrawer {...props} />}>
-      <Drawer.Screen name="Messages" component={Dashboard} options={{title: ''}} />
+      <Drawer.Screen name="Messages" component={Dashboard} options={{title: 'Stalk Group Chat'}} />
       <Drawer.Screen name="Edit Profile" component={EditProfile} />
-      <Drawer.Screen name="Screen2" component={Screen2} />
-      <Drawer.Screen name="Screen3" component={Screen3} />
     </Drawer.Navigator>
   );
 }
@@ -40,12 +36,6 @@ const App = props => {
           component={Signup}
           options={{ title: '', headerShown: false }}
         />
-        
-        {/* <Stack.Screen
-          name="dashboard"
-          component={Dashboard}
-          options={{title: '', headerShown: false}}
-        /> */}
         <Stack.Screen
           name="dashboard"
           component={DrawerRoutes}

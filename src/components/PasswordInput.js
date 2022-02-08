@@ -44,13 +44,11 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   textFieldView: {
-    height: 40,
+    height: 50,
     width: width * 0.8,
     marginTop: 5,
-    marginBottom: 10,
     marginLeft:15,
     justifyContent: 'center',
-    marginTop: 30
   },
 });
 export default PasswordInput;
