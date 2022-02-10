@@ -7,6 +7,7 @@ import {
     View,
     ImageBackground,
     Alert,
+    Image
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,13 +23,21 @@ const EditProfile = () => {
 
     const imj = require('../asset/user.jpg')
     const [image, setImage] = useState('../asset/user.jpg');
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState("");
     const [imageUrl, setImageUrl] = useState("")
+    const [Name, setName] = useState('');
+    const [allUsers, setAllusers] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setemail] = useState('');
 
     var userUID = Firebase.auth().currentUser.uid;
+    Firebase.database().ref('users/' + userUID).once('value', snap => {
+        setAllusers(snap.val().image);
+        setName(snap.val().name);
+        setPhone(snap.val().phone);
+        setemail(snap.val().email);
+    })
     console.log(userUID, 'uid');
-
-
     const reference = storage().ref(`${userUID}.jpg`);
 
     bs = React.createRef();
@@ -46,12 +55,8 @@ const EditProfile = () => {
         })
         .catch((e) => console.log('uploading image error => ', e));;
 
-        try {
-            // await task;
-      
-            const url = await reference.getDownloadURL();
-      
-          
+        try {      
+            const url = await reference.getDownloadURL();          
             setImage(null);
       
             // Alert.alert(
@@ -159,20 +164,29 @@ const EditProfile = () => {
                                 style={{ height: 130, width: 130, marginTop: 30 }}
                                 imageStyle={{ borderRadius: 130 / 2 }}>
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
-                                    <Icon name='camera' size={35} color="#BABABA" style={{
+                                <Image
+                    source={{uri: allUsers}}
+                    style={{
+                      height: 110,
+                      width: 110,
+                      borderRadius: 110 / 2,
+                      marginBottom: 10,
+                    }}
+                  />
+                                    <Icon name='camera' size={25} color="white" style={{
                                         opacity: 0.9,
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         borderWidth: 1,
                                         borderColor: '#fff',
                                         borderRadius: 10,
+                                        position:'absolute',
                                     }} />
                                 </View>
                             </ImageBackground>
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ marginTop: 40, fontSize: 18, fontWeight: 'bold', color: 'black', marginBottom: 20 }}>{userData ? userData.name : 'UserName'}</Text>
+                    <Text style={{ marginTop: 40, fontSize: 18, fontWeight: 'bold', color: 'black', marginBottom: 20 }}>{Name}</Text>
                 </View>
 
                 <View style={styles.action}>
@@ -180,7 +194,7 @@ const EditProfile = () => {
                     <TextInput
                         placeholder='Full Name'
                         placeholderTextColor="#666666"
-                        value={userData ? userData.name : 'UserName'}
+                        value={Name}
                         onChangeText={(txt) => setUserData({ ...userData, name: txt })}
                         style={styles.textInput} />
                 </View>
@@ -191,7 +205,7 @@ const EditProfile = () => {
                         placeholder='Phone Number'
                         placeholderTextColor="#666666"
                         keyboardType='phone-pad'
-                        value={userData ? userData.phone : ''}
+                        value={phone}
                         onChangeText={(txt) => setUserData({ ...userData, phone: txt })}
                         style={styles.textInput} />
                 </View>
@@ -199,12 +213,13 @@ const EditProfile = () => {
                 <View style={styles.action}>
                     <FontAwesome name="envelope-o" color="#000" size={20} />
                     <TextInput
-                        placeholder='testemail@gmail.com'
+                        placeholder='Email'
+                        value={email}
                         color='#DFDF3C'
-                        placeholderTextColor="#666666"
+                        placeholderTextColor="white"
                         keyboardType='email-address'
                         editable={false}
-                        style={styles.textInput} />
+                        style={styles.textemailinput} />
                 </View>
 
                 <TouchableOpacity style={styles.commandButton} onPress={handleSubmit}>
@@ -231,7 +246,8 @@ const styles = StyleSheet.create({
         width: 100,
         borderRadius: 15,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative'
     },
     action: {
         flexDirection: 'row',
@@ -246,6 +262,12 @@ const styles = StyleSheet.create({
         marginTop: -12,
         paddingLeft: 10,
         color: '#05375a',
+    },
+    textemailinput: {
+        flex: 1,
+        marginTop: -12,
+        paddingLeft: 10,
+        color: 'grey',
     },
     commandButton: {
         padding: 15,

@@ -183,7 +183,7 @@ const Signup = props => {
                     <TouchableOpacity
                       onPress={openGallery}
                       style={styles.Image}>
-                      <Text style={styles.buttonText}>Select File</Text>
+                      <Text numberOfLines={1} style={styles.buttonText}> {imageuri == "" ? "Select image" : imageuri} </Text>
                     </TouchableOpacity>
                   </View>
                   <View
@@ -208,6 +208,8 @@ const Signup = props => {
                           fontWeight: 'bold',
                           marginLeft: 25,
                           color: 'white',
+                          paddingTop: 10,
+                          paddingBottom:10
                         }}>
                         Already have Account? Click Here
                       </Text>
@@ -247,6 +249,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+    color: 'white'
   },
   loginButtonStyle: {
     backgroundColor: '#28E7EF',
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
   error: {
     color: '#f00',
     fontSize: 9,
-    marginTop: -5,
+    marginTop: 7,
     marginLeft: 17,
   },
   email: {
@@ -268,6 +271,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'grey',
+    marginTop: 1,
+    fontSize: 15
   },
   password: {
     width: '80%',

@@ -51,13 +51,6 @@ const Login = props => {
         backgroundColor: '#43425D'
       }}>
       <ScrollView style={{flex: 1}}>
-        {/* <ImageBackground
-          source={require('../images/login1.jpg')}
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            paddingHorizontal: 20,
-          }}> */}
           <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome To STalk</Text>
           </View>
@@ -67,8 +60,9 @@ const Login = props => {
               Password: '',
             }}
             validationSchema={loginValidation}
-            onSubmit={values => {
+            onSubmit={(values, { resetForm}) => {
               console.log(values, 'users');
+              resetForm({values: ''})
               SignInUser(values.Email, values.Password)
                 .then(async res => {
                   const uid = Firebase.auth().currentUser.uid;
@@ -79,9 +73,8 @@ const Login = props => {
                 .catch(error => {
                   alert("User doesn't exists");
                 });
-              
             }}>
-            {({errors, values, touched, handleSubmit, setFieldValue}) => {
+            {({errors, values, resetForm, touched, handleSubmit, setFieldValue}) => {
               return (
                 <View
                   style={{
@@ -124,7 +117,7 @@ const Login = props => {
                       flex: 0.9,
                       flexDirection: 'column',
                       alignItems:'flex-start',
-                      paddingVertical: 35,
+                      paddingVertical: 20,
                     }}>
                     <View style={styles.buttonContainer1}>
                       <RadioButton
@@ -137,6 +130,8 @@ const Login = props => {
                     <View style={[styles.buttonContainer1, { marginBottom: 95 }]}>
                       <TouchableOpacity
                         onPress={() => {
+                          resetForm({values: '', errors: ''})
+                          
                           props.navigation.navigate('signup');
                         }}>
                         <Text style={styles.signup}>New User? Click Here</Text>
@@ -184,7 +179,7 @@ const styles = StyleSheet.create({
   error: {
     color: '#f00',
     fontSize: 9,
-    marginTop: -5,
+    marginTop: 1,
     marginLeft: 17,
   },
   email: {
@@ -197,7 +192,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer1: {
     width: '85%',
-    marginBottom: 25,
+    marginBottom: 2,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 35,
@@ -207,6 +202,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: '80%',
     color: 'grey',
+    marginVertical: 15,
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',
   },

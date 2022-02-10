@@ -7,12 +7,13 @@ import {
   View,
   FlatList,
   Image,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import Firebase from '../Firebase/firebaseConfig';
 import Icons from 'react-native-vector-icons/Feather';
-import {SendMessage, Display} from '../Firebase/Message';
+import {SendMessage} from '../Firebase/Message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import storage from '@react-native-firebase/storage';
 import 'firebase/firestore';
 
 class Dashboard extends PureComponent {
@@ -21,7 +22,7 @@ class Dashboard extends PureComponent {
     currentUid: '',
     allMessages: [],
     status: 'online',
-    allUsers: []
+    allUsers: [],
   };
 
   async componentDidMount() {
@@ -44,9 +45,23 @@ class Dashboard extends PureComponent {
     } catch (error) {
       alert(error);
     }
+    BackHandler.addEventListener('hardwareBackPress', this.backStuff);
+
     this.displayUsers();
   }
 
+  backStuff = () => {
+    Alert.alert('Hold on!', 'Are you sure you want to exit Stalk?', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+    return true;
+  };
+  
   displayUsers = () => {
     if (this.state.currentUid) {
       try {
@@ -99,16 +114,25 @@ class Dashboard extends PureComponent {
   render() {
     return (
       <View style={{flex: 1, backgroundColor: '#1F313B'}}>
-        <View style={{flexDirection:'row'}}>
+        <View style={{flexDirection: 'row'}}>
           {this.state.allUsers.map((image, i) => {
             return (
-              <View style={{flexDirection:'row', marginVertical: 5, marginHorizontal: 5}} key={i}>
-                <Image style= {{width:40, height: 40, borderRadius: 40}} source={{uri: image}} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginVertical: 5,
+                  marginHorizontal: 5,
+                }}
+                key={i}>
+                <Image
+                  style={{width: 40, height: 40, borderRadius: 40}}
+                  source={{uri: image}}
+                />
               </View>
             );
           })}
         </View>
-       
+
         <FlatList
           style={{marginBottom: 60}}
           inverted
@@ -129,7 +153,9 @@ class Dashboard extends PureComponent {
                 style={{
                   borderRadius: 20,
                   backgroundColor:
-                    this.state.currentUid === item.sendBy ? '#E0D5FF' : '#EBEBEB',
+                    this.state.currentUid === item.sendBy
+                      ? '#E0D5FF'
+                      : '#EBEBEB',
                 }}>
                 <Text style={styles.messageText}>{item.message}</Text>
               </View>
