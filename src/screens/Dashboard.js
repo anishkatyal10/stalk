@@ -10,6 +10,7 @@ import {
   BackHandler,
   Alert,
 } from 'react-native';
+
 import Firebase from '../Firebase/firebaseConfig';
 import Icons from 'react-native-vector-icons/Feather';
 import {SendMessage} from '../Firebase/Message';
@@ -23,6 +24,7 @@ class Dashboard extends PureComponent {
     allMessages: [],
     status: 'online',
     allUsers: [],
+    allNames: []
   };
 
   async componentDidMount() {
@@ -87,18 +89,18 @@ class Dashboard extends PureComponent {
         console.log(this.state.allUsers, 'user images');
       });
   };
-  showOnlineUsers = () => {
-    {
-      this.state.allUsers.map((item, id) => {
-        <li key={id} style={{marginVertical: 5, marginHorizontal: 5}}>
-          <Image
-            style={{width: 58, height: 58, borderRadius: 40}}
-            source={{uri: item}}
-          />
-        </li>;
-      });
-    }
-  };
+  // showOnlineUsers = () => {
+  //   {
+  //     this.state.allUsers.map((item, id) => {
+  //       <li key={id} style={{marginVertical: 5, marginHorizontal: 5}}>
+  //         <Image
+  //           style={{width: 58, height: 58, borderRadius: 40}}
+  //           source={{uri: item}}
+  //         />
+  //       </li>;
+  //     });
+  //   }
+  // };
   sendMessage = () => {
     if (this.state.message) {
       SendMessage(this.state.currentUid, this.state.message)
@@ -116,6 +118,7 @@ class Dashboard extends PureComponent {
       <View style={{flex: 1, backgroundColor: '#1F313B'}}>
         <View style={{flexDirection: 'row'}}>
           {this.state.allUsers.map((image, i) => {
+            console.log(image, "user")
             return (
               <View
                 style={{
@@ -128,6 +131,7 @@ class Dashboard extends PureComponent {
                   style={{width: 40, height: 40, borderRadius: 40}}
                   source={{uri: image}}
                 />
+                
               </View>
             );
           })}
@@ -173,6 +177,7 @@ class Dashboard extends PureComponent {
               placeholderTextColor="#000"
               style={{
                 height: 40,
+                color: "#000",
                 borderRadius: 15,
                 backgroundColor: '#EAEEEF',
                 paddingLeft: 25,

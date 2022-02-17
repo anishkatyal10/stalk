@@ -44,7 +44,9 @@ const CustomDrawer = props => {
   
   const signinUserData = () => {
     const uid =  Firebase.auth().currentUser.uid;
+    console.log(uid, "sign in uid")
     Firebase.database().ref('users/' + uid).once('value', snap => {
+      console.log(snap.val(), "snap")
       setAllusers(snap.val().image);
       console.log(allUsers, "userImage")
       setName(snap.val().name);

@@ -58,14 +58,15 @@ const Signup = props => {
     setUploading(true);
     try {
       const snapshotObj = await storage().ref(filename).putFile(uploadUri);
+      console.log(snapshotObj, "snapshot")
       if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
-        return `https://firebasestorage.googleapis.com/v0/b/stalk-b1a12.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
+        return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
       }
 
       setUploading(false);
       console.log('Image uploaded successfully to cloud');
     } catch (e) {
-      console.log(e);
+      console.log(e, "");
     }
 
     setImageuri(null);
