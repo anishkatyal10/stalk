@@ -15,12 +15,17 @@ import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
+import Footer from '../components/Footer';
 import { SignUpUser } from '../Firebase/SignUpUser';
+import Firebase from '../Firebase/firebaseConfig';
 import { AddUser } from '../Firebase/Users';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserImage } from '../Firebase/Users';
 import storage from '@react-native-firebase/storage';
 import Icons from 'react-native-vector-icons/Feather';
 import auth from '@react-native-firebase/auth';
+import { utils } from '@react-native-firebase/app';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -76,18 +81,10 @@ const Signup = props => {
     console.log(filename, "file")
     const reference = storage().ref(filename);
 
-    // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${filename}`;
-    console.log( "path", uploadUri)
+    const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${filename}`;
+    console.log(pathToFile, "path")
           // uploads file
-         const task =  reference.putFile(uploadUri);
-         console.log(task, "task")
-         task.on('state_changed', taskSnapshot => {
-          console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
-        });
-        
-        task.then(() => {
-          console.log('Image uploaded to the bucket!');
-        });
+         const task = await reference.putFile(uploadUri);
          if (task && task.metadata && task.metadata.name) {
                 return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${task.metadata.name}?alt=media`;
          }
