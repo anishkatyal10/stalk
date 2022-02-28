@@ -1,21 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
   Text,
   View,
   ImageBackground,
+  Image,
   ScrollView,
 } from 'react-native';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
 import Footer from '../components/Footer';
 import Firebase from '../Firebase/firebaseConfig';
-import {SignInUser} from '../Firebase/SignInUser';
+import { SignInUser } from '../Firebase/SignInUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icons from 'react-native-vector-icons/Feather';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 const loginValidation = Yup.object().shape({
   Email: Yup.string()
@@ -29,15 +33,15 @@ const loginValidation = Yup.object().shape({
 });
 
 const Online = () => {
-  const uid = Firebase.auth().currentUser.uid;
-  const reference = Firebase.database().ref('online/' + uid);
-  reference.set({uuid: uid}).then(() => console.log('Online presence set'));
+  const uid = auth().currentUser.uid;
+  const reference = database().ref(`/online/${uid}`);
+  reference.set({ uuid: uid }).then(() => console.log('Online presence set'));
 };
 const Login = props => {
   useEffect(() => {
     async function getUID() {
-      const uid = await AsyncStorage.getItem('UID');
-      if (uid) {
+      const userID = await AsyncStorage.getItem('UID');
+      if (userID) {
         props.navigation.navigate('dashboard');
       }
     }
@@ -48,43 +52,51 @@ const Login = props => {
       style={{
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#43425D'
+        backgroundColor: '#43425D',
+        alignItems: 'center'
       }}>
-      <ScrollView style={{flex: 1}}>
-          <View style={styles.container}>
-            <Text style={styles.welcomeText}>Welcome To STalk</Text>
-          </View>
-          <Formik
-            initialValues={{
-              Email: '',
-              Password: '',
-            }}
-            validationSchema={loginValidation}
-            onSubmit={(values, { resetForm}) => {
-              console.log(values, 'users');
-              resetForm({values: ''})
-              SignInUser(values.Email, values.Password)
-                .then(async res => {
-                  const uid = Firebase.auth().currentUser.uid;
-                  await AsyncStorage.setItem('UID', uid);
-                  props.navigation.navigate('dashboard');
-                  Online();
-                })
-                .catch(error => {
-                  alert("User doesn't exists");
-                });
-            }}>
-            {({errors, values, resetForm, touched, handleSubmit, setFieldValue}) => {
-              return (
-                <View
-                  style={{
-                    flex: 2.5,
-                    marginLeft: 10,
-                    flexDirection: 'column',
-                    alignItems:'flex-start',
-                    paddingVertical: 36,
+      <ScrollView style={{ flex: 1}}>
+        <View style={styles.container}>
+          <Image style={{ height: 40, width: 180 }} source={require('../images/logo.jpg')} />
+        </View>
+        <Formik
+          initialValues={{
+            Email: '',
+            Password: '',
+          }}
+          validationSchema={loginValidation}
+          onSubmit={(values, { resetForm }) => {
+            console.log(values, 'users');
+            resetForm({ values: '' })
+            SignInUser(values.Email, values.Password)
+              .then(async res => {
+                const uid = auth().currentUser.uid;
+                console.log(uid, "user online")
+                await AsyncStorage.setItem('UID', uid);
+                props.navigation.navigate('dashboard');
+                Online();
+              })
+              .catch(error => {
+                alert("User doesn't exists");
+              });
+          }}>
+          {({ errors, values, resetForm, touched, handleSubmit, setFieldValue }) => {
+            return (
+              <View
+                style={{
+                  flex: 6,
+                  marginLeft: 10,
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                }}>
+                <View style={{ justifyContent: 'center', flexDirection: 'column', paddingVertical: 10 }}>
+                  <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
                   }}>
-                  <View style={{ justifyContent: 'center', flexDirection: 'column', paddingVertical: 36 }}>
+                    
+                    <View style={{marginLeft: 20}}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="mail" size={20} color="#00B5BD" />
                     <EmailInput
                       emailStyle={styles.email}
                       name="Email"
@@ -92,15 +104,24 @@ const Login = props => {
                       type="text"
                       value={values.Email}
                       setFieldValue={setFieldValue}
-                      placeholder="Enter Email"
+                      placeholder="Email"
                       placeholderTextColor="grey"
                     />
                     {errors.Email && touched.Email && (
                       <Text style={styles.error}>{errors.Email}</Text>
                     )}
+                    </View>
+                  </View>
+                  <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    bottom: 10
+                  }}>
+                    <View style={{marginLeft: 20}}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="key" size={20} color="#00B5BD" />
                     <PasswordInput
                       passwordStyle={styles.password}
-                      placeholder="Enter Password"
+                      placeholder="Password"
                       placeholderTextColor="grey"
                       name="Password"
                       id="Password"
@@ -109,39 +130,52 @@ const Login = props => {
                       value={values.Password}
                     />
                     {errors.Password && touched.Password && (
-                      <Text style={styles.error}>{errors.Password}</Text>
+                      <Text style={styles.error1}>{errors.Password}</Text>
                     )}
-                  </View>
-                  <View
-                    style={{
-                      flex: 0.9,
-                      flexDirection: 'column',
-                      alignItems:'flex-start',
-                      paddingVertical: 20,
-                    }}>
-                    <View style={styles.buttonContainer1}>
-                      <RadioButton
-                        buttonStyle={styles.loginButtonStyle}
-                        textStyle={styles.signinTextStyle}
-                        onPress={handleSubmit}
-                        title="login"
-                      />
-                    </View>
-                    <View style={[styles.buttonContainer1, { marginBottom: 95 }]}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          resetForm({values: '', errors: ''})
-                          
-                          props.navigation.navigate('signup');
-                        }}>
-                        <Text style={styles.signup}>New User? Click Here</Text>
-                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
-              );
-            }}
-          </Formik>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    marginBottom: 40,
+                  }}>
+                  <View style={styles.buttonContainer1}>
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle1}
+                      textStyle={styles.signinTextStyle}
+                      onPress={handleSubmit}
+                      title="SIGN IN"
+                    />
+                  </View>
+                  <View>
+                    <Text style={styles.or}>OR</Text>
+                  </View>
+                  <View style={styles.buttonContainer}>
+
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle}
+                      textStyle={styles.signinTextStyle}
+                      onPress={handleSubmit}
+                      title="Sign In with Facebook"
+                    />
+                  </View>
+                  <View style={[styles.buttonContainer1, { marginBottom: 95 }]}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        resetForm({ values: '', errors: '' })
+
+                        props.navigation.navigate('signup');
+                      }}>
+                      <Text style={styles.signup}>Don't have an account yet? Sign Up</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        </Formik>
         {/* </ImageBackground> */}
       </ScrollView>
     </View>
@@ -159,6 +193,7 @@ const styles = StyleSheet.create({
     flex: 0.6,
     flexDirection: 'column',
     paddingVertical: 40,
+    alignItems: 'center'
   },
   welcomeText: {
     marginHorizontal: 20,
@@ -171,7 +206,10 @@ const styles = StyleSheet.create({
   loginButtonStyle: {
     backgroundColor: '#28E7EF',
     width: '85%',
-       
+  },
+  loginButtonStyle1: {
+    backgroundColor: '#FE7F14',
+    width: '85%',
   },
   signinTextStyle: {
     color: 'white',
@@ -179,31 +217,38 @@ const styles = StyleSheet.create({
   error: {
     color: '#f00',
     fontSize: 9,
-    marginTop: 1,
-    marginLeft: 17,
+    marginLeft: 15,
+  },
+  error1: {
+    color: '#f00',
+    fontSize: 9,
+    marginLeft: 15,
+    marginTop: 15
   },
   email: {
     height: 40,
-    width: '80%',
     marginVertical: 15,
     color: 'grey',
-    borderBottomWidth: 1.9,
+    borderBottomWidth: .8,
     borderBottomColor: '#D3D3D3',
   },
   buttonContainer1: {
-    width: '85%',
     marginBottom: 2,
     paddingHorizontal: 15,
-    paddingVertical: 10,
     borderRadius: 35,
-    justifyContent: 'flex-start'
-},
+    justifyContent: 'flex-start',
+    marginBottom: 0
+  },
+  buttonContainer: {
+    marginBottom: 2,
+    paddingHorizontal: 15,
+    borderRadius: 35,
+    justifyContent: 'flex-start',
+    marginBottom: 0
+  },
   password: {
-    height: 40,
-    width: '80%',
-    color: 'grey',
-    marginVertical: 15,
-    borderBottomWidth: 1.9,
+    color: 'white',
+    borderBottomWidth: 1.8,
     borderBottomColor: '#D3D3D3',
   },
   signup: {
@@ -212,6 +257,11 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     color: 'white',
   },
+  or: {
+    marginLeft: 150,
+    fontWeight: 'bold',
+    color: 'white'
+  }
 });
 
 export default Login;

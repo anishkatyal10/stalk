@@ -37,12 +37,13 @@ const styles = StyleSheet.create ({
     textField: {
         flex: 1,
         marginHorizontal: 0,
+        marginLeft: 30,
         fontSize: 15,
         color: 'white'
     },
     textFieldView: {
         height: 50,
-        width: width * 0.80,
+        width: width * 0.7,
         marginTop: 5,
         marginLeft: 15
     }

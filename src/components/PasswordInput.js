@@ -42,10 +42,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
     fontSize: 15,
     color: 'white',
+    marginLeft: 30
   },
   textFieldView: {
     height: 50,
-    width: width * 0.8,
+    width: width * 0.7,
     marginTop: 5,
     marginLeft:15,
     justifyContent: 'center',

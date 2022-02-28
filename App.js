@@ -5,8 +5,8 @@ import Dashboard from './src/screens/Dashboard';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import EditProfile from './App/Screens/EditProfile';
-import CustomDrawer from './App/Components/CustomDrawer';
+import EditProfile from './src/screens/EditProfile';
+import CustomDrawer from './src/components/CustomDrawer';
 import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
@@ -15,7 +15,7 @@ const Drawer = createDrawerNavigator();
 
 function DrawerRoutes() {
   return (
-    <Drawer.Navigator initialRouteName="Messages" drawerContent={props => <CustomDrawer {...props} />}>
+    <Drawer.Navigator  initialRouteName="Messages" drawerContent={props => <CustomDrawer {...props} />}>
       <Drawer.Screen name="Messages" component={Dashboard} options={{title: 'Stalk Group Chat'}} />
       <Drawer.Screen name="Edit Profile" component={EditProfile} />
     </Drawer.Navigator>

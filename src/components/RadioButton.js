@@ -21,10 +21,10 @@ const RadioButton = ({ title, onPress, buttonStyle, textStyle}) => {
 const styles = StyleSheet.create({
     button: {
         height: 50,
-        width: width/2,
+        width: width/1.38,
         margin: 20,
         borderColor: 'black',
-        borderRadius: 25,
+        borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: 'black',
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 15,
-        textTransform: 'uppercase'
+        // textTransform: 'uppercase'
     }
 })
 

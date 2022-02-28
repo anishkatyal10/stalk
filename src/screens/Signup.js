@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -10,20 +10,17 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
-import Footer from '../components/Footer';
-import {SignUpUser} from '../Firebase/SignUpUser';
-import Firebase from '../Firebase/firebaseConfig';
-import {AddUser} from '../Firebase/Users';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import ImgToBase64 from 'react-native-image-base64';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserImage} from '../Firebase/Users';
+import { SignUpUser } from '../Firebase/SignUpUser';
+import { AddUser } from '../Firebase/Users';
+import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import Icons from 'react-native-vector-icons/Feather';
+import auth from '@react-native-firebase/auth';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -51,32 +48,63 @@ const Signup = props => {
     });
   };
 
-  const uploadImage = async () => {
+  // const uploadImage = async () => {
+  //   const uploadUri = imageuri;
+  //   console.log(uploadUri, 'upload uri');
+  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  //   setUploading(true);
+  //   try {
+  //     const snapshotObj = await storage().ref(filename).putFile(uploadUri);
+  //     console.log(snapshotObj, "snapshot")
+  //     if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
+  //       return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
+  //     }
+
+  //     setUploading(false);
+  //     console.log('Image uploaded successfully to cloud');
+  //   } catch (e) {
+  //     console.log(e, "");
+  //   }
+
+  //   setImageuri(null);
+  // };
+
+  const uploadImage = async () =>{
     const uploadUri = imageuri;
     console.log(uploadUri, 'upload uri');
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-    setUploading(true);
-    try {
-      const snapshotObj = await storage().ref(filename).putFile(uploadUri);
-      console.log(snapshotObj, "snapshot")
-      if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
-        return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
-      }
+    console.log(filename, "file")
+    const reference = storage().ref(filename);
 
-      setUploading(false);
-      console.log('Image uploaded successfully to cloud');
-    } catch (e) {
-      console.log(e, "");
-    }
-
-    setImageuri(null);
-  };
+    // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${filename}`;
+    console.log( "path", uploadUri)
+          // uploads file
+         const task =  reference.putFile(uploadUri);
+         console.log(task, "task")
+         task.on('state_changed', taskSnapshot => {
+          console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+        });
+        
+        task.then(() => {
+          console.log('Image uploaded to the bucket!');
+        });
+         if (task && task.metadata && task.metadata.name) {
+                return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${task.metadata.name}?alt=media`;
+         }
+        //   console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+        // });
+        
+        // task.then(() => {
+        //   console.log('Image uploaded to the bucket!');
+        // });
+      
+  }
   return (
     <View
       style={{
         flex: 1,
         flexDirection: 'column',
-        backgroundColor:'#43425D',
+        backgroundColor: '#43425D',
       }}>
       {/* <ImageBackground
         source={require('../images/login1.jpg')}
@@ -86,49 +114,58 @@ const Signup = props => {
           flexDirection: 'column',
           paddingHorizontal: 20,
         }}> */}
-        <ScrollView style={{flex: 1}}>
-          <View style={styles.container}>
-            <Text style={styles.welcomeText}>Welcome To STalk</Text>
-          </View>
-          <Formik
-            initialValues={{
-              fullName: '',
-              Email: '',
-              Password: '',
-              phoneNumber: '',
-            }}
-            validationSchema={loginValidation}
-            onSubmit={values => {
-              SignUpUser(values.Email, values.Password)
-                .then(async res => {
-                  const downloadedImage = await uploadImage();
-                  console.log(downloadedImage, 'downImage');
-                  var userUID = Firebase.auth().currentUser.uid;
-                  console.log(userUID, 'userid');
-                  console.log('upload image called before');
-                  AddUser(
-                    values.fullName,
-                    values.Email,
-                    values.phoneNumber,
-                    downloadedImage,
-                    userUID,
-                  )
-                    .then(() => {
-                      props.navigation.navigate('login');
-                      Alert.alert('user saved');
-                    })
-                    .catch(error => {
-                      Alert.alert(error);
-                    });
-                })
-                .catch(error => {
-                  Alert.alert(error);
-                });
-            }}>
-            {({errors, values, touched, handleSubmit, setFieldValue}) => {
-              return (
-                <View style={styles.mainView}>
-                  <View style={styles.view}>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.welcomeText}>Create Account</Text>
+        </View>
+        <Formik
+          initialValues={{
+            fullName: '',
+            Email: '',
+            Password: '',
+            phoneNumber: '',
+          }}
+          validationSchema={loginValidation}
+          onSubmit={values => {
+            SignUpUser(values.Email, values.Password)
+              .then(async res => {
+                const downloadedImage = await uploadImage();
+                console.log(downloadedImage, 'downImage');
+                var userUID = auth().currentUser.uid;
+                console.log(userUID, 'userid');
+                console.log('upload image called before');
+                AddUser(
+                  values.fullName,
+                  values.Email,
+                  values.phoneNumber,
+                  userUID,
+                  downloadedImage
+                )
+                  .then(() => {
+                    props.navigation.navigate('login');
+                    Alert.alert('user saved');
+                  })
+                  .catch(error => {
+                    Alert.alert(error);
+                  });
+              })
+              .catch(error => {
+                Alert.alert(error);
+              });
+          }}>
+          {({ errors, values, touched, handleSubmit, setFieldValue }) => {
+            return (
+              <View style={styles.mainView}>
+                <View style={styles.view}>
+                  <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    left: 10,
+                  }}>
+                    
+                    <View style={{marginLeft: 20}}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="user" size={20} color="#00B5BD" />
+
                     <EmailInput
                       emailStyle={styles.email}
                       name="fullName"
@@ -139,9 +176,19 @@ const Signup = props => {
                       placeholder="Full Name"
                       placeholderTextColor="grey"
                     />
+
                     {errors.fullName && touched.fullName && (
                       <Text style={styles.error}>{errors.fullName}</Text>
                     )}
+                    </View>
+                    </View>
+                    <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    left: 10, bottom: 10
+                  }}>
+                    <View style={{marginLeft:20 }}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="mail" size={20} color="#00B5BD" />
                     <EmailInput
                       emailStyle={styles.email}
                       name="Email"
@@ -155,6 +202,15 @@ const Signup = props => {
                     {errors.Email && touched.Email && (
                       <Text style={styles.error}>{errors.Email}</Text>
                     )}
+                    </View>
+                    </View>
+                    <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    left: 10,  bottom: 20,
+                  }}>
+                    <View style={{marginLeft:20 }}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="key" size={20} color="#00B5BD" />
                     <PasswordInput
                       passwordStyle={styles.password}
                       placeholder="Password"
@@ -168,6 +224,15 @@ const Signup = props => {
                     {errors.Password && touched.Password && (
                       <Text style={styles.error}>{errors.Password}</Text>
                     )}
+                    </View>
+                    </View>
+                    <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    left: 10,  bottom: 30,
+                  }}>
+                   <View style={{marginLeft:20 }}>
+                    <Icons style={{marginLeft: 13, top: 40}} name="phone" size={20} color="#00B5BD" />
                     <EmailInput
                       emailStyle={styles.email}
                       name="phoneNumber"
@@ -181,17 +246,29 @@ const Signup = props => {
                     {errors.phoneNumber && touched.phoneNumber && (
                       <Text style={styles.error}>{errors.phoneNumber}</Text>
                     )}
+                    </View>
+                    </View>
+                    <View style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    bottom: 30
+                  }}>
+                    <View
+                      style={{ left: 34, bottom: 5, justifyContent: 'center', marginLeft: 10 }}>
+                      <Icons name="camera" size={20} color="#00B5BD" />
+                    </View>
                     <TouchableOpacity
                       onPress={openGallery}
                       style={styles.Image}>
                       <Text numberOfLines={1} style={styles.buttonText}> {imageuri == "" ? "Select image" : imageuri} </Text>
                     </TouchableOpacity>
+                    </View>
                   </View>
                   <View
                     style={{
                       flex: 1,
                       flexDirection: 'column',
-                      paddingVertical: 20,
+                      paddingVertical: 0,
                     }}>
                     <RadioButton
                       buttonStyle={styles.loginButtonStyle}
@@ -210,16 +287,16 @@ const Signup = props => {
                           marginLeft: 25,
                           color: 'white',
                           paddingTop: 10,
-                          paddingBottom:10
+                          paddingBottom: 10
                         }}>
                         Already have Account? Click Here
                       </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-              );
+                );
             }}
-          </Formik>
+              </Formik>
         </ScrollView>
       {/* </ImageBackground> */}
     </View>
@@ -229,23 +306,21 @@ const styles = StyleSheet.create({
   mainView: {
     flex: 2.5,
     flexDirection: 'column',
-    paddingVertical: 10,
     marginLeft: 20
 
   },
   view: {
-    flex: 2.5,
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingVertical: 10,
+    marginLeft: -20
   },
   container: {
-    flex: 0.6,
+    flex: 1,
     flexDirection: 'column',
-    paddingVertical: 40,
+    paddingVertical: 15,
   },
   welcomeText: {
-    marginHorizontal: 20,
     marginTop: 20,
     textAlign: 'center',
     fontWeight: 'bold',
@@ -269,11 +344,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.9,
     borderBottomColor: '#D3D3D3',
     color: 'white',
+    marginTop: 20
   },
   buttonText: {
     color: 'grey',
     marginTop: 1,
-    fontSize: 15
+    fontSize: 15,
+    marginLeft: 30
   },
   password: {
     width: '80%',
@@ -288,7 +365,7 @@ const styles = StyleSheet.create({
     color: 'white',
     marginLeft: 15,
     margin: 20,
-    width: '85%'
+    width: '70%'
   },
   gender: {
     color: 'grey',

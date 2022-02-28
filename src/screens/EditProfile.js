@@ -9,7 +9,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
-
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import storage from '@react-native-firebase/storage';
@@ -28,9 +29,9 @@ const EditProfile = () => {
   const [phone, setPhone] = useState('');
   const [email, setemail] = useState('');
 
-  var userUID = Firebase.auth().currentUser.uid;
-  Firebase.database()
-    .ref('users/' + userUID)
+  var userUID = auth().currentUser.uid;
+  database()
+    .ref(`/users/${userUID}`)
     .once('value', snap => {
       setAllusers(snap.val().image);
       setName(snap.val().name);
@@ -82,7 +83,7 @@ const EditProfile = () => {
 
     // var userUID = Firebase.auth().currentUser.uid;
     // console.log(userUID, 'uid');
-    Firebase.database()
+    database()
       .ref(`/users/${userUID}`)
       .update({
         name: userData.name,
@@ -327,12 +328,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
     paddingTop: 20,
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
-    // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 0},
-    // shadowRadius: 5,
-    // shadowOpacity: 0.4,
   },
   panelTitle: {
     fontSize: 27,
