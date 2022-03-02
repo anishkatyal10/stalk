@@ -19,13 +19,15 @@ import Footer from '../components/Footer';
 import { SignUpUser } from '../Firebase/SignUpUser';
 import Firebase from '../Firebase/firebaseConfig';
 import { AddUser } from '../Firebase/Users';
-import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserImage } from '../Firebase/Users';
 import storage from '@react-native-firebase/storage';
 import Icons from 'react-native-vector-icons/Feather';
 import auth from '@react-native-firebase/auth';
 import { utils } from '@react-native-firebase/app';
+// import {ImagePicker, launchImageLibrary} from 'react-native-image-picker';
+// import * as ImagePicker from 'react-native-image-picker';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -45,7 +47,9 @@ const loginValidation = Yup.object().shape({
 
 const Signup = props => {
   const [imageuri, setImageuri] = useState('');
+  const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
   const openGallery = () => {
     launchImageLibrary('photo', response => {
       console.log(response, 'response');
@@ -53,49 +57,113 @@ const Signup = props => {
     });
   };
 
-  // const uploadImage = async () => {
-  //   const uploadUri = imageuri;
-  //   console.log(uploadUri, 'upload uri');
-  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-  //   setUploading(true);
-  //   try {
-  //     const snapshotObj = await storage().ref(filename).putFile(uploadUri);
-  //     console.log(snapshotObj, "snapshot")
-  //     if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
-  //       return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
-  //     }
-
-  //     setUploading(false);
-  //     console.log('Image uploaded successfully to cloud');
-  //   } catch (e) {
-  //     console.log(e, "");
-  //   }
-
-  //   setImageuri(null);
-  // };
-
-  const uploadImage = async () =>{
+  const uploadImage = async () => {
     const uploadUri = imageuri;
     console.log(uploadUri, 'upload uri');
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-    console.log(filename, "file")
-    const reference = storage().ref(filename);
+    setUploading(true);
+    try {
+      const snapshotObj = await storage().ref(filename).putFile(uploadUri);
+      console.log(snapshotObj, "snapshot")
+      if (snapshotObj && snapshotObj.metadata && snapshotObj.metadata.name) {
+        return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${snapshotObj.metadata.name}?alt=media`;
+      }
 
-    const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${filename}`;
-    console.log(pathToFile, "path")
-          // uploads file
-         const task = await reference.putFile(uploadUri);
-         if (task && task.metadata && task.metadata.name) {
-                return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${task.metadata.name}?alt=media`;
-         }
-        //   console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
-        // });
+      setUploading(false);
+      console.log('Image uploaded successfully to cloud');
+    } catch (e) {
+      console.log(e, "");
+    }
+
+    setImageuri(null);
+  };
+
+  // const uploadImage = async () =>{
+  //   const uploadUri = imageuri;
+  //   console.log(uploadUri, 'upload uri');
+  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  //   console.log(filename, "file")
+  //   const reference = storage().ref(filename);
+
+  //   const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${filename}`;
+  //   console.log(pathToFile, "path")
+  //         // uploads file
+  //        const task = await reference.putFile(uploadUri);
+  //        if (task && task.metadata && task.metadata.name) {
+  //               return `https://firebasestorage.googleapis.com/v0/b/sstalk-64300.appspot.com/o/${task.metadata.name}?alt=media`;
+  //        }
+  //       //   console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+  //       // });
         
-        // task.then(() => {
-        //   console.log('Image uploaded to the bucket!');
-        // });
+  //       // task.then(() => {
+  //       //   console.log('Image uploaded to the bucket!');
+  //       // });
       
-  }
+  // }
+  // const selectImage = () => {
+  //   const options = {
+  //     title: 'Select Image',
+  //     type: 'library',
+  //     options: {
+  //       maxHeight: 200,
+  //       maxWidth: 200,
+  //       selectionLimit: 0,
+  //       mediaType: 'photo',
+  //       includeBase64: false,
+  //       includeExtra: true
+  //     }
+  //   };
+  //   ImagePicker.launchImageLibrary(options, response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //     } else {
+  //       const source = { uri: response.uri };
+  //       console.log(source);
+  //       setImage(source);
+  //     }
+  //   });
+  // };
+
+  // const uploadImage = async () => {
+  //   const uri  = image;
+  //   const filename = uri.substring(uri.lastIndexOf('/') + 1);
+  //   const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+  // console.log(uploadUri, "upuri")
+  // return;
+  //   setUploading(true);
+  //   // setTransferred(0);
+  
+  //   const task = storage()
+  //     .ref(filename)
+  //     .putFile(uploadUri);
+  
+  //   // set progress state
+  //   task.on('state_changed', snapshot => {
+  //     // setTransferred(
+  //     //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+  //     // );
+  //     console.log("snapshot")
+  //   });
+  
+  //   try {
+  //     await task;
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  
+  //   setUploading(false);
+  
+  //   Alert.alert(
+  //     'Photo uploaded!',
+  //     'Your photo has been uploaded to Firebase Cloud Storage!'
+  //   );
+  
+  //   setImage(null);
+  // };
   return (
     <View
       style={{
@@ -125,8 +193,9 @@ const Signup = props => {
           validationSchema={loginValidation}
           onSubmit={values => {
             SignUpUser(values.Email, values.Password)
-              .then(async res => {
+              .then(async (res) => {
                 const downloadedImage = await uploadImage();
+                // return;
                 console.log(downloadedImage, 'downImage');
                 var userUID = auth().currentUser.uid;
                 console.log(userUID, 'userid');
