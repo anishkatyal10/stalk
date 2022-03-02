@@ -15,15 +15,13 @@ import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
-import Footer from '../components/Footer';
 import {SignUpUser} from '../Firebase/SignUpUser';
 import Firebase from '../Firebase/firebaseConfig';
 import {AddUser} from '../Firebase/Users';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import ImgToBase64 from 'react-native-image-base64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserImage} from '../Firebase/Users';
 import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 
 const loginValidation = Yup.object().shape({
   fullName: Yup.string()
@@ -103,7 +101,7 @@ const Signup = props => {
                 .then(async res => {
                   const downloadedImage = await uploadImage();
                   console.log(downloadedImage, 'downImage');
-                  var userUID = Firebase.auth().currentUser.uid;
+                  var userUID = auth().currentUser.uid;
                   console.log(userUID, 'userid');
                   console.log('upload image called before');
                   AddUser(

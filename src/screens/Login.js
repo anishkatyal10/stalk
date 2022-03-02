@@ -12,8 +12,8 @@ import * as Yup from 'yup';
 import RadioButton from '../components/RadioButton';
 import EmailInput from '../components/EmailInput';
 import PasswordInput from '../components/PasswordInput';
-import Footer from '../components/Footer';
-import Firebase from '../Firebase/firebaseConfig';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 import {SignInUser} from '../Firebase/SignInUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -29,15 +29,15 @@ const loginValidation = Yup.object().shape({
 });
 
 const Online = () => {
-  const uid = Firebase.auth().currentUser.uid;
-  const reference = Firebase.database().ref('online/' + uid);
+  const uid = auth().currentUser.uid;
+  const reference = database().ref(`/online/${uid}`);
   reference.set({uuid: uid}).then(() => console.log('Online presence set'));
 };
 const Login = props => {
   useEffect(() => {
     async function getUID() {
-      const uid = await AsyncStorage.getItem('UID');
-      if (uid) {
+      const userID = await AsyncStorage.getItem('UID');
+      if (userID) {
         props.navigation.navigate('dashboard');
       }
     }
@@ -65,7 +65,7 @@ const Login = props => {
               resetForm({values: ''})
               SignInUser(values.Email, values.Password)
                 .then(async res => {
-                  const uid = Firebase.auth().currentUser.uid;
+                  const uid = auth().currentUser.uid;
                   await AsyncStorage.setItem('UID', uid);
                   props.navigation.navigate('dashboard');
                   Online();

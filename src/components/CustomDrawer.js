@@ -3,10 +3,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  TextInput,
   View,
   ImageBackground,
-  ScrollView,
   Image,
 } from 'react-native';
 import {
@@ -16,15 +14,17 @@ import {
 import Firebase from '../Firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'firebase/firestore';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 signout = async props => {
   try {
-    const uid = await Firebase.auth().currentUser.uid;
-    const reference = await Firebase.database().ref('online/' + uid);
+    const uid = auth().currentUser.uid;
+    const reference = database().ref(`/online/${uid}`);
     reference
       .remove()
       .then(() => console.log('On disconnect function configured.'));
-    await Firebase.auth()
+    await auth()
       .signOut()
       .then(async () => {
         await AsyncStorage.removeItem('UID');
@@ -43,9 +43,9 @@ const CustomDrawer = props => {
   const [Name, setName] = useState('');
   
   const signinUserData = () => {
-    const uid =  Firebase.auth().currentUser.uid;
+    const uid =  auth().currentUser.uid;
     console.log(uid, "sign in uid")
-    Firebase.database().ref('users/' + uid).once('value', snap => {
+    database().ref(`/users/${uid}`).on('value', snap => {
       console.log(snap.val(), "snap")
       setAllusers(snap.val().image);
       console.log(allUsers, "userImage")
