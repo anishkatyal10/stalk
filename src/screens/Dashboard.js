@@ -86,7 +86,7 @@ class Dashboard extends PureComponent {
     database()
       .ref(`/users/${uid}`)
       .once('value', snap => {
-        this.setState({ allUsers: [...this.state.allUsers, snap.val().image] });
+        this.setState({ allUsers: [...this.state.allUsers, snap.val().image],allNames: [...this.state.allNames, snap.val().name] });
         console.log(this.state.allUsers, 'user images');
       });
   };
