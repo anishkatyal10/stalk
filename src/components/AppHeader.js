@@ -16,25 +16,25 @@ class AppHeader extends PureComponent {
             {title === 'Messages' ? (
               <View style={{width: '10%'}}></View>
             ) : (
-              <View style={{alignItems: 'flex-start'}}>
+              <View style={{ flexDirection:'row'}}>
                 <TouchableOpacity
                   style={styles.iconView}
                   onPress={() => {
-                    navigation.goBack(null);
+                    navigation.goBack('Users');
                   }}>
                   <Icons name="arrow-left-thick" size={22} color="#000" />
                 </TouchableOpacity>
-              </View>
-            )}
-            <View style={{width: '80%', alignItems: 'center'}}>
+              
+            
               <Text
                 style={
                   ([styles.textView],
-                  {fontSize: 22, fontWeight: 'bold', color: 'black'})
+                  {fontSize: 20, fontWeight: 'bold', color: 'black'})
                 }>
                 {title}
               </Text>
             </View>
+            )}
           </View>
         </View>
       </View>
@@ -49,13 +49,10 @@ const styles = StyleSheet.create({
   },
   headerView: {},
   iconView: {
-      marginRight:45,
-      marginTop:20,
-      paddingBottom: 20
+      marginRight:32,
+      marginTop: 10
   },
   textView: {
-    padding: 10,
-    paddingTop:20
   },
 });
 

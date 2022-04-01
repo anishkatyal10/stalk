@@ -36,6 +36,9 @@ const Online = () => {
   const uid = auth().currentUser.uid;
   const reference = database().ref(`/online/${uid}`);
   reference.set({ uuid: uid }).then(() => console.log('Online presence set'));
+  database().ref(`users/${uid}`).update({
+    status: 'Online'
+  })
 };
 const Login = props => {
   useEffect(() => {
@@ -149,7 +152,7 @@ const Login = props => {
                       title="SIGN IN"
                     />
                   </View>
-                  <View>
+                  {/* <View>
                     <Text style={styles.or}>OR</Text>
                   </View>
                   <View style={styles.buttonContainer}>
@@ -160,7 +163,7 @@ const Login = props => {
                       onPress={handleSubmit}
                       title="Sign In with Facebook"
                     />
-                  </View>
+                  </View> */}
                   <View style={[styles.buttonContainer1, { marginBottom: 95 }]}>
                     <TouchableOpacity
                       onPress={() => {

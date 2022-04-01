@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import { View, Text, Image } from 'react-native';
 import Login from './src/screens/Login';
 import Signup from './src/screens/Signup';
 import Dashboard from './src/screens/Dashboard';
@@ -59,7 +60,8 @@ const App = props => {
         <Stack.Screen
           name="personalChat"
           component={PersonalChat}
-          options={{title: 'Inbox', headerShown: true}}
+          // options={{title: 'Inbox', headerShown: true}}
+          options={({route})=>({title:<View><Text style={{color: 'black', fontSize: 17}}>{route.params.UserName}</Text><Text style={{color: 'black', fontSize: 10}}>{route.params.Status}</Text></View>})}
         />
       </Stack.Navigator>
     </NavigationContainer>

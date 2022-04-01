@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Children, PureComponent} from 'react';
 import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
 import 'firebase/firestore';
 import database from '@react-native-firebase/database';
@@ -32,6 +32,7 @@ class RegisteredUsers extends PureComponent {
                 username: child.val().name,
                 uuid: child.val().uuid,
                 userImage: child.val().image,
+                status: child.val().status, 
               });
               console.log(users, 'all users');
               console.log(users[0].userImage, 'all the uses');
@@ -59,10 +60,9 @@ class RegisteredUsers extends PureComponent {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TouchableOpacity
-                style={{height: 90, width: 90, borderRadius: 45}}>
+              <TouchableOpacity>
                 <Image
-                  style={{height: 90, width: 90, borderRadius: 45}}
+                  style={{height: 70, width: 70, borderRadius: 45}}
                   source={{
                     uri:
                       this.state.loggedInUserImage === ''
@@ -74,9 +74,8 @@ class RegisteredUsers extends PureComponent {
               <Text
                 style={{
                   color: '#fff',
-                  fontSize: 20,
+                  fontSize: 15,
                   marginTop: 10,
-                  fontWeight: 'bold',
                 }}>
                 {this.state.loggedInUserName}
               </Text>
@@ -85,7 +84,7 @@ class RegisteredUsers extends PureComponent {
           renderItem={({item}) => (
               <View style={{marginBottom: 10, marginTop: 20}}>
               <TouchableOpacity
-                style={{flexDirection: 'row', marginBottom: 10}} onPress={()=> this.props.navigation.navigate('personalChat', { UserName: item.username, guestUid: item.uuid })}>
+                style={{flexDirection: 'row', marginBottom: 10}} onPress={()=> this.props.navigation.navigate('personalChat', { UserName: item.username, guestUid: item.uuid, Status: item.status })}>
                   <View
                     style={{
                       width: '14%',
@@ -96,9 +95,9 @@ class RegisteredUsers extends PureComponent {
                     >
                     <Image
                       style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 40,
+                        width: 40,
+                        height: 40,
+                        borderRadius: 30,
                         marginLeft: 10,
                       }}
                       source={{
@@ -112,10 +111,11 @@ class RegisteredUsers extends PureComponent {
                     width: '86%',
                     alignItems: 'flex-start',
                     justifyContent: 'center',
-                    marginLeft: 45,
+                    marginLeft: 25,
+                    marginBottom: 5
                   }}>
                   <Text
-                    style={{color: '#fff', fontSize: 16, fontWeight: 'bold'}}>
+                    style={{color: '#fff', fontSize: 15}}>
                     {item.username}
                   </Text>
                 </View>

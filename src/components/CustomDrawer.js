@@ -16,14 +16,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'firebase/firestore';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
-
+import { FieldValue } from 'firebase/firestore';
+import moment from 'moment'
 signout = async props => {
+  var todayDate = moment().format('Do MMMM YYYY, h:mm a');
+
   try {
     const uid = auth().currentUser.uid;
+    database().ref(`users/${uid}`).update({
+      status:  `last seen on ${todayDate}`,
+    })
     const reference = database().ref(`/online/${uid}`);
     reference
       .remove()
       .then(() => console.log('On disconnect function configured.'));
+      
     await auth()
       .signOut()
       .then(async () => {

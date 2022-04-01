@@ -13,6 +13,7 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SendMessage, RecieveMessage } from '../Firebase/PersonalMessage';
 import AppHeader from '../components/AppHeader';
 import database from '@react-native-firebase/database';
+import moment from 'moment';
 
 class PersonalChat extends PureComponent {
     state = {
@@ -43,6 +44,8 @@ class PersonalChat extends PureComponent {
                     sendBy: data.val().message.sender,
                     recieveBy:data.val().message.reciever,
                     msg: data.val().message.msg,
+                    date: data.val().message.date,
+              time: data.val().message.time,
                   });
                 });
                 this.setState({ allMessages: messages.reverse() });
@@ -75,6 +78,7 @@ class PersonalChat extends PureComponent {
     render(){
         return(
             <View style={{ flex: 1, backgroundColor: '#1F313B' }}>
+                {/* <AppHeader title={this.props.route.params.UserName} navigation={this.props.navigation} /> */}
             <FlatList
               style={{ marginBottom: 60 }}
               inverted
@@ -93,13 +97,15 @@ class PersonalChat extends PureComponent {
                   }}>
                   <View
                     style={{
-                      borderRadius: 20,
+                      borderRadius: 5,
                       backgroundColor:
                         this.state.currentUid === item.sendBy
-                          ? '#E0D5FF'
+                          ? '#ECFFDC'
                           : '#EBEBEB',
                     }}>
                     <Text style={styles.messageText}>{item.msg}</Text>
+                    <Text style={styles.timeText}>{item.time}</Text>
+
                   </View>
                 </View>
               )}
@@ -146,9 +152,9 @@ class PersonalChat extends PureComponent {
         backgroundColor: 'pink',
       },
       messageText: {
-        padding: 10,
-        fontSize: 16,
-        fontWeight: 'bold',
+        padding: 5,
+        fontSize: 10,
+        fontWeight:'10',
         color: 'black',
       },
       inputBoxView: {
@@ -157,6 +163,14 @@ class PersonalChat extends PureComponent {
         width: '100%',
         position: 'absolute',
         flexDirection: 'row',
+      },
+      timeText: {
+        padding: 5,
+        fontSize: 5,
+        fontWeight:'10',
+        color: 'black',
+        alignItems:'flex-end',
+        position:'relative',
       },
     });
        
