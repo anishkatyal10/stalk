@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "836338275732",
+    "firebase_url": "https://sstalk-64300-default-rtdb.firebaseio.com",
     "project_id": "sstalk-64300",
     "storage_bucket": "sstalk-64300.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "836338275732-gv6lcjoqrpc53pgq2svkhnqv1ik0bk53.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stalk",
+            "certificate_hash": "bc65c3cda6864cc1985e5b96227c41322e840232"
+          }
+        },
         {
           "client_id": "836338275732-bjq4jhngkmmdfb8c3kj4rp233s9apq66.apps.googleusercontent.com",
           "client_type": 3

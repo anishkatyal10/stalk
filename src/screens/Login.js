@@ -20,6 +20,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icons from 'react-native-vector-icons/Feather';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+// GoogleSignin.configure({
+//   webClientId: '836338275732-bjq4jhngkmmdfb8c3kj4rp233s9apq66.apps.googleusercontent.com',
+// });
 
 const loginValidation = Yup.object().shape({
   Email: Yup.string()
@@ -40,6 +45,19 @@ const Online = () => {
     status: 'Online'
   })
 };
+
+async function onGoogleButtonPress() {
+  // Get the users ID token
+  const { idToken } = await GoogleSignin.signIn();
+
+  // Create a Google credential with the token
+  const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+  // Sign-in the user with the credential
+  return auth().signInWithCredential(googleCredential);
+  
+}
+
 const Login = props => {
   useEffect(() => {
     async function getUID() {
@@ -49,6 +67,9 @@ const Login = props => {
       }
     }
     getUID();
+    GoogleSignin.configure({
+      webClientId: '836338275732-bjq4jhngkmmdfb8c3kj4rp233s9apq66.apps.googleusercontent.com',
+    });
   }, []);
   return (
     <View
@@ -152,6 +173,27 @@ const Login = props => {
                       title="SIGN IN"
                     />
                   </View>
+                  <View style={styles.buttonContainer1}>
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle2}
+                      textStyle={styles.signinTextStyle}
+                      onPress={() => onGoogleButtonPress().then(() => {
+                        console.log("signed in gaccount")
+                        props.navigation.navigate('Dashboard1');
+                      })}
+                      title="SIGN IN WITH GOOGLE"
+                    />
+                  </View>
+                  <View style={styles.buttonContainer1}>
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle3}
+                      textStyle={styles.signinTextStyle}
+                      onPress={() => {
+                        props.navigation.navigate('Login2');
+                      }}
+                      title="SIGN IN PHONE NUMBER"
+                    />
+                  </View>
                   {/* <View>
                     <Text style={styles.or}>OR</Text>
                   </View>
@@ -212,6 +254,14 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle1: {
     backgroundColor: '#FE7F14',
+    width: '85%',
+  },
+  loginButtonStyle2: {
+    backgroundColor: 'cyan',
+    width: '85%',
+  },
+  loginButtonStyle3: {
+    backgroundColor: '#D16048',
     width: '85%',
   },
   signinTextStyle: {
