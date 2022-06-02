@@ -194,6 +194,16 @@ const Login = props => {
                       title="SIGN IN PHONE NUMBER"
                     />
                   </View>
+                  <View style={styles.buttonContainer1}>
+                    <RadioButton
+                      buttonStyle={styles.loginButtonStyle4}
+                      textStyle={styles.signinTextStyle}
+                      onPress={() => {
+                        props.navigation.navigate('Login2');
+                      }}
+                      title="SIGN IN WITH FACEBOOK"
+                    />
+                  </View>
                   {/* <View>
                     <Text style={styles.or}>OR</Text>
                   </View>
@@ -257,11 +267,15 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   loginButtonStyle2: {
-    backgroundColor: 'cyan',
+    backgroundColor: '#C94130',
     width: '85%',
   },
   loginButtonStyle3: {
-    backgroundColor: '#D16048',
+    backgroundColor: '#407BB8',
+    width: '85%',
+  },
+  loginButtonStyle4: {
+    backgroundColor: '#4267B2',
     width: '85%',
   },
   signinTextStyle: {
