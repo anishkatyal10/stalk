@@ -55,7 +55,7 @@ const confirm1 = route.params.confirm;
         style={{
           fontSize: 22,
           fontWeight: 'bold',
-          color: 'white',
+          color: 'black',
           marginLeft: 20,
           marginTop: 25,
           marginBottom: 15,
@@ -71,7 +71,7 @@ const confirm1 = route.params.confirm;
         <TextInput
           style={{
             marginBottom: 20,
-            color: '#fff',
+            color: 'black',
             width: '100%',
             borderBottomColor: '#f8f8f8',
             borderBottomWidth: 1,
